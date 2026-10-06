@@ -1,7 +1,6 @@
 import { Api } from './api.ts';
 import { getChannel } from './config.ts';
 
-// TODO: timed messages every 5 min or so
 // TODO: !timeout,!ban
 
 interface ChatMessage {
