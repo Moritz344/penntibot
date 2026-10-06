@@ -55,48 +55,8 @@ export class Api {
 
   }
 
-  async getBroadcasterData(channel: string | null) {
-    try {
-      const url = "/users?login=" + channel;
-      const data = await fetch(this.baseUrl + url, {
-        headers: {
-          Authorization: `Bearer ${this.botData.token}`,
-          "Client-Id": this.clientId,
-        },
-      });
-      return data.json();
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
-  }
-
   async sendMessage(message: string,channel: string) {
-    try {
-      const broadcasterData: any = await this.getBroadcasterData(channel);
-      const broadcasterId = broadcasterData.data[0].id;
-
-      const bodyData = {
-        channel: channel,
-        message: message,
-        sender_id: this.botData.id,
-        broadcaster_id: broadcasterId,
-      }
-
-      const data = await fetch(this.baseUrl + "/chat/messages", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${this.botData.token}`,
-            "Client-Id": this.clientId,
-            "Content-Type": "application/json"
-          },body: JSON.stringify(bodyData),
-     });
-
-      return data.json();
-    } catch (error) {
-      console.log(error);
-    }
-
+    this.socket.send(`PRIVMSG #${channel} :${message}`);
   }
 
   disconnect() {}
