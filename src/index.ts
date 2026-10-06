@@ -86,24 +86,8 @@ class Bot {
     }
   }
 
-  async sendRhythiaLink() {
-    await this.api.sendMessage("Mein Rhythia Profil: https://www.rhythia.com/player/393679", this.channel)
-  }
-
-  async sendGithubLink() {
-    await this.api.sendMessage("Mein Github Profil: https://github.com/Moritz344 ", this.channel)
-  }
-
   async sendSimpleMessage(message: string) {
     await this.api.sendMessage(message, this.channel)
-  }
-
-  async helpCommand() {
-    let messageToSend = "";
-    for (const cmd of this.commands) {
-      messageToSend += "\n" + cmd.name + " - " + cmd.description + "\n";
-    }
-    await this.api.sendMessage(messageToSend, this.channel)
   }
 
   onMessage() {
