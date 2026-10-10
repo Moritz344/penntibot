@@ -52,10 +52,7 @@ export class Api {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ data: { user_id: user_id,reason: reason }}),
-
       }) 
-      console.log(user_id);
-      console.log(await data.json());
     } catch(error) {
       console.log(error);
     }
@@ -72,8 +69,7 @@ export class Api {
           "Client-Id": getClientId(),
           "Content-Type": "application/json"
         }
-      }) 
-      console.log(await data.json());
+      });
     } catch(error) {
       console.log(error);
     }
