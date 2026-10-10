@@ -77,7 +77,7 @@ class Bot {
     if (args.length == 0) {
       return;
     }
-    const idFromUserToBan = args[0];
+    const idFromUserToBan = await this.api.getUserId(args[0]);
     this.api.banUser(this.api.botData.id,this.api.broadcasterId,idFromUserToBan,"test");
 
   }
@@ -85,7 +85,7 @@ class Bot {
     if (args.length == 0) {
       return;
     }
-    const idFromUserToUnban = args[0];
+    const idFromUserToUnban = await this.api.getUserId(args[0]);
     this.api.unbanUser(this.api.botData.id,this.api.broadcasterId,idFromUserToUnban);
 
   }
