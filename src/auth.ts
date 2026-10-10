@@ -5,10 +5,12 @@ function getScopes(): string {
     "chat:edit",
     "moderator:manage:announcements",
     "moderation:read",
+    "moderator:manage:chat_settings",
     "moderator:read:chatters",
     "channel:manage:moderators",
     "channel:manage:polls",
     "user:write:chat",
+     "moderator:manage:banned_users",
     "chat:read",
     "user:read:follows",
   ].join(" ");
@@ -58,7 +60,7 @@ export function startServerForAuth(): Promise<{ token: string }> {
         if (req.method === "POST" && url.pathname === "/token") {
           const body: any = await req.json();
           const token = body.token;
-          console.log(token);
+          console.log("TOKEN:",token);
 
           resolve({ token });
 
