@@ -9,6 +9,7 @@ interface BotData {
 export class Api {
   public baseUrl = "https://api.twitch.tv/helix";
   public clientId = getClientId();
+  public readonly broadcasterId = 451147363;
 
   private botData: BotData = {
     id: 0,
@@ -25,6 +26,75 @@ export class Api {
       token: readToken(),
       id: 1143105765,
       username: getUsername()
+    }
+  }
+
+  async getUserId(login: string): Promise<string | undefined> {
+    const res = await fetch(`${this.baseUrl}/users?login=${login}`, {
+      headers: {
+        Authorization: `Bearer ${this.botData.token}`,
+        "Client-Id": this.clientId,
+      },
+    });
+    if (!res.ok) return;
+    const json: any = await res.json();
+    return json.data[0]?.id;
+}
+
+  async banUser(moderator_id: string,broadcaster_id: string,user_id: string,reason: string) {
+    const url = this.baseUrl + "/moderation/bans?broadcaster_id=" + broadcaster_id + "&moderator_id=" + moderator_id;
+    try {
+      const data = await fetch(url,{
+        method: "POST",
+        headers: {
+           Authorization: `Bearer ${readToken()}`,
+          "Client-Id": getClientId(),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ data: { user_id: user_id,reason: reason }}),
+
+      }) 
+      console.log(user_id);
+      console.log(await data.json());
+    } catch(error) {
+      console.log(error);
+    }
+
+  }
+
+    async unbanUser(moderator_id: string,broadcaster_id: string,user_id: string) {
+    const url = this.baseUrl + "/moderation/bans?broadcaster_id=" + broadcaster_id + "&moderator_id=" + moderator_id + "&user_id=" + user_id;
+    try {
+      const data = await fetch(url,{
+        method: "DELETE",
+        headers: {
+           Authorization: `Bearer ${readToken()}`,
+          "Client-Id": getClientId(),
+          "Content-Type": "application/json"
+        }
+      }) 
+      console.log(await data.json());
+    } catch(error) {
+      console.log(error);
+    }
+
+  }
+
+  async toggleEmoteOnlyMode(moderator_id: string,broadcaster_id: string,emote_mode: boolean) {
+    const url = this.baseUrl + "/chat/settings?broadcaster_id=" + broadcaster_id + "&moderator_id=" + moderator_id;
+    try {
+      const data = await fetch(url,{
+        method: "PATCH",
+        headers: {
+           Authorization: `Bearer ${readToken()}`,
+          "Client-Id": getClientId(),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ emote_mode: emote_mode }),
+      })
+      const response = data.json();
+    } catch(error) {
+      console.log(error);
     }
   }
 
@@ -46,10 +116,17 @@ export class Api {
       const raw = event.data as string;
       const match = raw.match(/^(@[^ ]+ )?:(\w+)!.* PRIVMSG #\w+ :(.+)/);
       if (!match) { return; }
-      const [, tagSection, user, message] = match;
+      const [, tagSection,user, message ] = match;
+      let isMod = false;
+      if (tagSection.split(";").includes("mod=1") || user == "pennti") {
+        isMod = true;
+      }
+      const id = tagSection.split("user-id=")[1].split(";")[0];
       onMessage({
         message: message,
-        username: user
+        username: user,
+        isMod: isMod,
+        id: id
       });
     })
 
